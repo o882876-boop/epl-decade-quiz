@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#08110d">
+  <meta name="description" content="計算 FC Ultimate Team 交易稅、淨利、回報率及最高買入價。">
+  <title>FC 炒卡助手</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%2308110d'/%3E%3Cpath d='M15 44V20h26v7H23v4h15v7H23v6z' fill='%23b9ff39'/%3E%3Cpath d='M43 25h7v19h-7z' fill='%23fff'/%3E%3C/svg%3E">
+  <style>
+    :root{color-scheme:dark;--bg:#07100c;--panel:#101b15;--panel2:#15241b;--line:#294031;--lime:#b9ff39;--lime2:#83d81c;--text:#f4f8f5;--muted:#9bb0a1;--red:#ff6b6b;--yellow:#ffd166;--shadow:0 18px 50px rgba(0,0,0,.28)}
+    *{box-sizing:border-box} html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"PingFang HK","Noto Sans TC",sans-serif;background:var(--bg);color:var(--text)}
+    body{margin:0;min-height:100vh;background:radial-gradient(circle at 80% -10%,rgba(185,255,57,.14),transparent 32rem),linear-gradient(180deg,#09140e 0,#07100c 55%)}
+    button,input,select{font:inherit} button{cursor:pointer}.shell{width:min(1120px,100%);margin:auto;padding:24px 20px 72px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:12px}.mark{display:grid;place-items:center;width:45px;height:45px;border:1px solid #44602f;border-radius:13px;background:linear-gradient(145deg,#19291d,#0b140e);color:var(--lime);font-weight:900;box-shadow:inset 0 0 18px rgba(185,255,57,.08)}
+    h1{font-size:clamp(1.35rem,4vw,1.75rem);margin:0;letter-spacing:-.03em}.sub{color:var(--muted);font-size:.83rem;margin-top:3px}.safe{display:flex;align-items:center;gap:8px;color:#c8d7cd;font-size:.82rem}.safe i{display:block;width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 10px var(--lime)}
+    .tabs{display:flex;gap:7px;margin:0 0 18px;padding:5px;width:max-content;background:#0b1610;border:1px solid var(--line);border-radius:13px}.tab{border:0;background:transparent;color:var(--muted);padding:9px 14px;border-radius:9px;font-weight:750}.tab.active{background:var(--lime);color:#09110c}.panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:minmax(0,.84fr) minmax(0,1.16fr);gap:20px}.card{background:linear-gradient(180deg,rgba(21,36,27,.96),rgba(14,25,19,.96));border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+    .calculator{padding:22px;position:sticky;top:16px;align-self:start}.eyebrow{margin:0 0 18px;color:var(--lime);font-size:.76rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.fields{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{color:#cad6ce;font-size:.84rem;font-weight:650}.input-wrap{position:relative}.input-wrap span{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#799083;font-size:.78rem;pointer-events:none}
+    input,select{width:100%;border:1px solid #32493a;background:#0a1510;color:var(--text);border-radius:12px;padding:13px 14px;min-height:48px;outline:none}input[type=number]{padding-right:54px}input:focus,select:focus{border-color:var(--lime2);box-shadow:0 0 0 3px rgba(185,255,57,.1)}
+    .results{margin-top:19px;padding:17px;border:1px solid #344b3a;border-radius:16px;background:#0a140f}.result-main{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:15px;border-bottom:1px solid #26392c}.result-main small,.metric small{display:block;color:var(--muted);font-size:.76rem}.result-main strong{font-size:2rem;line-height:1;color:var(--lime);letter-spacing:-.04em}.result-main .negative{color:var(--red)}.roi{font-weight:800;font-size:1rem;padding:5px 9px;border-radius:8px;background:rgba(185,255,57,.1);color:var(--lime)}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-top:14px}.metric strong{font-size:.98rem;display:block;margin-top:5px}.hint{margin:13px 2px 0;color:var(--muted);font-size:.78rem;line-height:1.55}.primary{width:100%;border:0;background:var(--lime);color:#0a120d;border-radius:12px;padding:13px 16px;font-weight:850;margin-top:16px;min-height:48px}.primary:hover{background:#ccff70}.primary:active{transform:translateY(1px)}
+    .watch{overflow:hidden}.watch-head{padding:20px 20px 16px;display:flex;justify-content:space-between;align-items:flex-end;gap:15px}.watch-head h2{font-size:1.05rem;margin:0 0 4px}.watch-head p{font-size:.8rem;color:var(--muted);margin:0}.count{font-size:.8rem;color:var(--lime);white-space:nowrap}.toolbar{display:grid;grid-template-columns:1fr 160px;gap:10px;padding:0 20px 15px}.table-wrap{overflow:auto;border-top:1px solid var(--line)}table{width:100%;border-collapse:collapse;min-width:650px}th{text-align:left;color:#82988a;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:12px 17px;background:#0e1913}td{padding:15px 17px;border-top:1px solid #223329;font-size:.86rem}tbody tr:hover{background:rgba(185,255,57,.025)}.horse strong{display:block;font-size:.92rem}.horse span{color:var(--muted);font-size:.73rem}.profit{color:var(--lime);font-weight:800}.loss{color:var(--red);font-weight:800}.delete{background:transparent;border:1px solid #3d5044;color:#91a397;border-radius:9px;padding:7px 9px}.delete:hover{color:#fff;border-color:#835151;background:rgba(255,107,107,.08)}
+    .empty{text-align:center;padding:58px 20px;color:var(--muted)}.empty b{display:block;color:#dbe5de;margin-bottom:7px}.footer-note{margin:15px 20px 19px;padding:12px 14px;border-radius:12px;background:rgba(255,209,102,.06);color:#c8b886;font-size:.76rem;line-height:1.55;border:1px solid rgba(255,209,102,.13)}.toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,20px);background:#eef8f1;color:#102018;border-radius:999px;padding:10px 16px;font-size:.84rem;font-weight:750;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 10px 30px #0008}.toast.show{opacity:1;transform:translate(-50%,0)}
+    .sim-layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:20px}.sim-controls{padding:20px;align-self:start;position:sticky;top:16px}.sim-controls .fields{grid-template-columns:1fr 1fr}.control-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}.secondary{border:1px solid #3b5243;background:#111e16;color:#dce7df;border-radius:12px;min-height:47px;font-weight:800}.secondary:hover{border-color:#6f8d76}.stop{background:#35191b;color:#ffb4b4;border-color:#6d3035}.sim-status{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;padding:11px 13px;border-radius:12px;background:#0a1510;border:1px solid #2c4133}.sim-status b{font-size:.88rem}.sim-status span{color:var(--muted);font-size:.78rem}.pulse{width:9px;height:9px;border-radius:50%;background:#617066}.pulse.running{background:var(--lime);box-shadow:0 0 0 5px rgba(185,255,57,.1)}
+    .sim-main{display:grid;gap:16px}.statbar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{padding:16px;border-radius:16px;background:linear-gradient(180deg,#15241b,#0e1913);border:1px solid var(--line)}.stat small{display:block;color:var(--muted);font-size:.73rem;margin-bottom:7px}.stat strong{font-size:1.22rem}.market-card,.log-card{overflow:hidden}.section-head{display:flex;align-items:center;justify-content:space-between;padding:17px 18px;border-bottom:1px solid var(--line)}.section-head h2{margin:0;font-size:1rem}.section-head span{font-size:.76rem;color:var(--muted)}.market-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:13px}.listing{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px;border:1px solid #293c30;border-radius:13px;background:#0c1711}.listing b{display:block;font-size:.88rem}.listing small{color:var(--muted);font-size:.72rem}.listing-price{text-align:right}.listing-price strong{display:block;color:#eaf4ed}.listing.buy-flash{border-color:var(--lime);background:rgba(185,255,57,.06)}.log{max-height:235px;overflow:auto}.log-row{display:grid;grid-template-columns:70px 1fr auto;gap:10px;padding:11px 17px;border-top:1px solid #203027;font-size:.78rem}.log-row time{color:#718579}.log-row em{font-style:normal;font-weight:800}.log-row.buy em{color:var(--yellow)}.log-row.sell em{color:var(--lime)}
+    @media(max-width:780px){.shell{padding:17px 14px 55px}.safe span{display:none}.grid,.sim-layout{grid-template-columns:1fr}.calculator,.sim-controls{position:static}.fields{gap:11px}.card{border-radius:18px}.watch-head{padding:18px 16px 14px}.toolbar{padding:0 16px 14px;grid-template-columns:1fr 135px}.metrics{grid-template-columns:1fr 1fr}.metric:last-child{grid-column:1/-1}.table-wrap{margin:0}.footer-note{margin:14px 16px 17px}.statbar{grid-template-columns:1fr 1fr}.market-list{grid-template-columns:1fr}.tabs{width:100%}.tab{flex:1}.log-row{grid-template-columns:58px 1fr auto;padding:10px 13px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="brand"><div class="mark">FC</div><div><h1>炒卡助手</h1><div class="sub">交易計算與模擬 Auto Buyer</div></div></div>
+      <div class="safe"><i></i><span>不連接 EA 帳戶</span></div>
+    </header>
+    <nav class="tabs" aria-label="功能選擇"><button class="tab active" data-tab="live">真實市場助手</button><button class="tab" data-tab="sim">模擬 Auto Buyer</button><button class="tab" data-tab="calc">交易計算器</button></nav>
+    <div class="panel active" id="livePanel">
+      <div class="grid">
+        <section class="card calculator">
+          <p class="eyebrow">快速判斷</p>
+          <div class="fields">
+            <div class="field full"><label for="livePaste">快速貼上</label><input id="livePaste" placeholder="例如：Palacios 600 800" autocomplete="off"></div>
+            <div class="field full"><label for="liveName">球員／卡名</label><input id="liveName" placeholder="Palacios" autocomplete="off"></div>
+            <div class="field"><label for="liveBuy">畫面買入價</label><div class="input-wrap"><input id="liveBuy" type="number" min="0" step="50" value="600"><span>Coins</span></div></div>
+            <div class="field"><label for="liveSell">預計售價</label><div class="input-wrap"><input id="liveSell" type="number" min="0" step="50" value="800"><span>Coins</span></div></div>
+            <div class="field full"><label for="liveTarget">最低接受淨利</label><div class="input-wrap"><input id="liveTarget" type="number" min="0" step="50" value="100"><span>Coins</span></div></div>
+          </div>
+          <div class="results"><div class="result-main"><div><small>判斷</small><strong id="liveDecision">值得買</strong></div><div class="roi" id="liveRoi">26.7%</div></div><div class="metrics"><div class="metric"><small>稅後淨利</small><strong id="liveProfit">160</strong></div><div class="metric"><small>交易稅</small><strong id="liveTax">40</strong></div><div class="metric"><small>最高可買</small><strong id="liveMax">660</strong></div></div></div>
+          <div class="control-actions"><button class="primary" id="checkLive" style="margin:0">即時計算</button><button class="secondary" id="copyLive">複製結果</button></div>
+          <a class="primary" id="openEa" href="https://www.ea.com/ea-sports-fc/ultimate-team/web-app/" target="_blank" rel="noopener" style="display:grid;place-items:center;text-decoration:none">開啟 EA Web App</a>
+          <p class="hint">價格由你從 EA 畫面輸入；本工具只分析，不讀取帳戶、不搜尋市場及不代你落單。</p>
+        </section>
+        <section class="card watch"><div class="watch-head"><div><h2>判斷紀錄</h2><p>快速比較最近睇過嘅真實市場價格</p></div><div class="count" id="liveCount">0 次</div></div><div class="table-wrap" id="liveHistory"><div class="empty"><b>未有紀錄</b>輸入價格後按「即時計算」</div></div><div class="footer-note">當結果達到你設定嘅最低淨利，手機會嘗試震動及發出提示音。Safari／Chrome 可能要求你先點擊頁面才能播放聲音。</div></section>
+      </div>
+    </div>
+    <div class="panel" id="calcPanel"><div class="grid">
+      <section class="card calculator" aria-labelledby="calc-title">
+        <p class="eyebrow" id="calc-title">交易計算器</p>
+        <div class="fields">
+          <div class="field full"><label for="player">球員／卡名</label><input id="player" placeholder="例如：83 Gold Rare" autocomplete="off"></div>
+          <div class="field"><label for="buy">每張買入價</label><div class="input-wrap"><input id="buy" type="number" min="0" step="50" inputmode="numeric" value="600"><span>Coins</span></div></div>
+          <div class="field"><label for="sell">預計售價</label><div class="input-wrap"><input id="sell" type="number" min="0" step="50" inputmode="numeric" value="700"><span>Coins</span></div></div>
+          <div class="field"><label for="qty">數量</label><input id="qty" type="number" min="1" max="100" step="1" inputmode="numeric" value="10"></div>
+          <div class="field"><label for="target">目標利潤／張</label><div class="input-wrap"><input id="target" type="number" min="0" step="50" inputmode="numeric" value="100"><span>Coins</span></div></div>
+        </div>
+        <div class="results" aria-live="polite">
+          <div class="result-main"><div><small>預計總利潤</small><strong id="totalProfit">650</strong></div><div class="roi" id="roi">10.8%</div></div>
+          <div class="metrics">
+            <div class="metric"><small>每張淨利</small><strong id="profitEach">65</strong></div>
+            <div class="metric"><small>EA 稅／張</small><strong id="tax">35</strong></div>
+            <div class="metric"><small>目標最高買入</small><strong id="maxBuy">550</strong></div>
+          </div>
+        </div>
+        <p class="hint" id="hint">售價扣除 5% 稅後，每張實收 665 Coins。</p>
+        <button class="primary" id="addBtn">加入觀察名單</button>
+      </section>
+      <section class="card watch" aria-labelledby="watch-title">
+        <div class="watch-head"><div><h2 id="watch-title">觀察名單</h2><p>比較邊張卡最值得入貨</p></div><div class="count" id="count">0 張卡</div></div>
+        <div class="toolbar"><input id="search" type="search" placeholder="搜尋球員／卡名"><select id="sort" aria-label="排序"><option value="profit">淨利最高</option><option value="roi">回報率最高</option><option value="recent">最近加入</option><option value="name">名稱 A–Z</option></select></div>
+        <div class="table-wrap" id="tableWrap"></div>
+        <div class="footer-note">此工具只作計算及記錄，不會登入或代你操作 Transfer Market。價格及買賣需由你自行核實並在官方應用程式完成。</div>
+      </section>
+    </div></div>
+    <div class="panel" id="simPanel">
+      <div class="sim-layout">
+        <section class="card sim-controls">
+          <div class="sim-status"><div><b id="botState">Bot 已停止</b><span id="scanState">等待開始</span></div><i class="pulse" id="pulse"></i></div>
+          <p class="eyebrow">Auto Buyer 設定</p>
+          <div class="fields">
+            <div class="field full"><label for="simBudget">起始資金</label><div class="input-wrap"><input id="simBudget" type="number" value="25000" min="1000" step="1000"><span>Coins</span></div></div>
+            <div class="field"><label for="simMaxBuy">最高買入</label><div class="input-wrap"><input id="simMaxBuy" type="number" value="900" min="150" step="50"><span>Coins</span></div></div>
+            <div class="field"><label for="simMinProfit">最低淨利</label><div class="input-wrap"><input id="simMinProfit" type="number" value="100" min="0" step="50"><span>Coins</span></div></div>
+            <div class="field"><label for="simRating">最低評分</label><input id="simRating" type="number" value="82" min="75" max="95"></div>
+            <div class="field"><label for="simSpeed">掃描速度</label><select id="simSpeed"><option value="2200">正常</option><option value="1100">快速</option><option value="550">極速</option></select></div>
+          </div>
+          <div class="control-actions"><button class="primary" id="startBot" style="margin:0">開始</button><button class="secondary stop" id="stopBot" disabled>停止</button></div>
+          <button class="secondary" id="resetSim" style="width:100%;margin-top:9px">重設模擬</button>
+          <p class="hint">只會操作頁面內產生嘅虛擬球員卡，不連接 EA 或任何真實市場。</p>
+        </section>
+        <div class="sim-main">
+          <div class="statbar">
+            <div class="stat"><small>Coins</small><strong id="simCoins">25,000</strong></div>
+            <div class="stat"><small>已實現盈利</small><strong id="simProfit">0</strong></div>
+            <div class="stat"><small>成功交易</small><strong id="simTrades">0</strong></div>
+            <div class="stat"><small>持貨</small><strong id="simStock">0</strong></div>
+          </div>
+          <section class="card market-card"><div class="section-head"><h2>模擬市場</h2><span id="marketTick">市場準備中</span></div><div class="market-list" id="marketList"></div></section>
+          <section class="card log-card"><div class="section-head"><h2>Bot 紀錄</h2><span>最新紀錄置頂</span></div><div class="log" id="simLog"><div class="empty"><b>未有交易</b>按「開始」讓 Bot 自動掃描</div></div></section>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+  <script>
+    const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString('en-GB');
+    const inputs=['buy','sell','qty','target'].map($); let items=[];
+    try{items=JSON.parse(localStorage.getItem('fc-watch-v1')||'[]')}catch(e){items=[]}
+    function priceStep(n){if(n<1000)return 50;if(n<10000)return 100;if(n<50000)return 250;if(n<100000)return 500;return 1000}
+    function floorPrice(n){const step=priceStep(Math.max(0,n));return Math.max(0,Math.floor(n/step)*step)}
+    function values(){const buy=Math.max(0,+$('buy').value||0),sell=Math.max(0,+$('sell').value||0),qty=Math.max(1,+$('qty').value||1),target=Math.max(0,+$('target').value||0),tax=Math.floor(sell*.05),net=sell-tax,profit=net-buy;return{buy,sell,qty,target,tax,net,profit,total:profit*qty,roi:buy?profit/buy*100:0,maxBuy:floorPrice(net-target)}}
+    function calculate(){const v=values();$('totalProfit').textContent=(v.total<0?'-':'')+fmt(Math.abs(v.total));$('totalProfit').className=v.total<0?'negative':'';$('profitEach').textContent=(v.profit<0?'-':'')+fmt(Math.abs(v.profit));$('profitEach').style.color=v.profit<0?'var(--red)':'';$('tax').textContent=fmt(v.tax);$('maxBuy').textContent=fmt(v.maxBuy);$('roi').textContent=(Number.isFinite(v.roi)?v.roi:0).toFixed(1)+'%';$('roi').style.color=v.roi<0?'var(--red)':'';$('hint').textContent=`售價扣除 5% 稅後，每張實收 ${fmt(v.net)} Coins。${v.profit<0?' 呢個價位會蝕 Coins。':''}`;return v}
+    function save(){localStorage.setItem('fc-watch-v1',JSON.stringify(items))}
+    function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+    function render(){const q=$('search').value.trim().toLowerCase(),sort=$('sort').value;let list=items.filter(x=>x.name.toLowerCase().includes(q));list.sort((a,b)=>sort==='roi'?b.roi-a.roi:sort==='recent'?b.created-a.created:sort==='name'?a.name.localeCompare(b.name):b.profit-a.profit);$('count').textContent=`${items.length} 張卡`;if(!list.length){$('tableWrap').innerHTML=`<div class="empty"><b>${items.length?'搵唔到相符項目':'未有觀察項目'}</b>${items.length?'試下其他搜尋字眼':'輸入價格後加入第一張卡'}</div>`;return}$('tableWrap').innerHTML=`<table><thead><tr><th>球員／卡</th><th>買入</th><th>售價</th><th>淨利／張</th><th>回報</th><th></th></tr></thead><tbody>${list.map(x=>`<tr><td class="horse"><strong>${escapeHtml(x.name)}</strong><span>${x.qty} 張 · 稅 ${fmt(x.tax)}</span></td><td>${fmt(x.buy)}</td><td>${fmt(x.sell)}</td><td class="${x.profit>=0?'profit':'loss'}">${x.profit>=0?'+':'-'}${fmt(Math.abs(x.profit))}</td><td>${x.roi.toFixed(1)}%</td><td><button class="delete" data-id="${x.id}" aria-label="刪除 ${escapeHtml(x.name)}">刪除</button></td></tr>`).join('')}</tbody></table>`}
+    function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.remove('show'),1800)}
+    function addItem(data){const v=data||values(),name=(data?.name||$('player').value.trim()||`未命名卡 ${items.length+1}`).slice(0,80);const item={id:crypto.randomUUID?.()||String(Date.now()),name,buy:+v.buy,sell:+v.sell,qty:+v.qty||1,tax:Math.floor(+v.sell*.05),profit:(+v.sell-Math.floor(+v.sell*.05))-(+v.buy),roi:+v.buy?(((+v.sell-Math.floor(+v.sell*.05))-(+v.buy))/(+v.buy)*100):0,created:Date.now()};items.unshift(item);save();render();toast('已加入觀察名單');return item}
+    inputs.forEach(el=>el.addEventListener('input',calculate));$('addBtn').addEventListener('click',()=>addItem());$('search').addEventListener('input',render);$('sort').addEventListener('change',render);$('tableWrap').addEventListener('click',e=>{const b=e.target.closest('.delete');if(!b)return;items=items.filter(x=>x.id!==b.dataset.id);save();render();toast('已刪除')});
+    calculate();render();
+    document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));$('livePanel').classList.toggle('active',btn.dataset.tab==='live');$('simPanel').classList.toggle('active',btn.dataset.tab==='sim');$('calcPanel').classList.toggle('active',btn.dataset.tab==='calc')}));
+
+    let liveRecords=[];try{liveRecords=JSON.parse(localStorage.getItem('fc-live-history-v1')||'[]')}catch(e){liveRecords=[]}
+    function liveValues(){const buy=Math.max(0,+$('liveBuy').value||0),sell=Math.max(0,+$('liveSell').value||0),target=Math.max(0,+$('liveTarget').value||0),tax=Math.floor(sell*.05),profit=sell-tax-buy,roi=buy?profit/buy*100:0,max=floorPrice(sell-tax-target);return{buy,sell,target,tax,profit,roi,max,good:profit>=target}}
+    function paintLive(){const v=liveValues();$('liveDecision').textContent=v.good?'值得買':'唔好買';$('liveDecision').className=v.good?'':'negative';$('liveRoi').textContent=v.roi.toFixed(1)+'%';$('liveRoi').style.color=v.good?'var(--lime)':'var(--red)';$('liveProfit').textContent=(v.profit<0?'-':'')+fmt(Math.abs(v.profit));$('liveProfit').style.color=v.good?'var(--lime)':'var(--red)';$('liveTax').textContent=fmt(v.tax);$('liveMax').textContent=fmt(v.max);return v}
+    function liveAlert(){try{navigator.vibrate?.([120,60,120]);const C=window.AudioContext||window.webkitAudioContext;if(C){const c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.setValueAtTime(.06,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.24);o.start();o.stop(c.currentTime+.24)}}catch(e){}}
+    function renderLiveHistory(){ $('liveCount').textContent=`${liveRecords.length} 次`;if(!liveRecords.length){$('liveHistory').innerHTML='<div class="empty"><b>未有紀錄</b>輸入價格後按「即時計算」</div>';return}$('liveHistory').innerHTML=`<table><thead><tr><th>球員／卡</th><th>買入</th><th>售價</th><th>淨利</th><th>判斷</th></tr></thead><tbody>${liveRecords.map(x=>`<tr><td class="horse"><strong>${escapeHtml(x.name)}</strong><span>${x.time}</span></td><td>${fmt(x.buy)}</td><td>${fmt(x.sell)}</td><td class="${x.good?'profit':'loss'}">${x.profit>=0?'+':'-'}${fmt(Math.abs(x.profit))}</td><td>${x.good?'值得買':'唔好買'}</td></tr>`).join('')}</tbody></table>`}
+    function checkLive(){const v=paintLive(),name=$('liveName').value.trim()||'未命名卡';liveRecords.unshift({...v,name,time:new Date().toLocaleTimeString('zh-HK',{hour:'2-digit',minute:'2-digit'})});liveRecords=liveRecords.slice(0,20);localStorage.setItem('fc-live-history-v1',JSON.stringify(liveRecords));renderLiveHistory();if(v.good){liveAlert();toast(`值得買：預計淨利 ${fmt(v.profit)} Coins`)}else toast(`唔好買：預計淨利 ${fmt(v.profit)} Coins`)}
+    ['liveBuy','liveSell','liveTarget'].forEach(id=>$(id).addEventListener('input',paintLive));$('livePaste').addEventListener('change',()=>{const raw=$('livePaste').value.trim(),nums=raw.match(/\d[\d,]*/g)||[];if(nums.length>=2){$('liveBuy').value=nums[nums.length-2].replaceAll(',','');$('liveSell').value=nums[nums.length-1].replaceAll(',','');const cut=raw.lastIndexOf(nums[nums.length-2]);$('liveName').value=raw.slice(0,cut).trim()||$('liveName').value;paintLive()}});$('checkLive').addEventListener('click',checkLive);$('copyLive').addEventListener('click',async()=>{const v=paintLive(),text=`${$('liveName').value.trim()||'未命名卡'}｜買入 ${fmt(v.buy)}｜售價 ${fmt(v.sell)}｜稅後淨利 ${fmt(v.profit)}｜${v.good?'值得買':'唔好買'}`;try{await navigator.clipboard.writeText(text);toast('結果已複製')}catch(e){toast('未能複製，請長按結果')}});paintLive();renderLiveHistory();
+
+    const simNames=['Palacios','Martínez','Silva','Williams','Kovács','Müller','Santos','Diop','Rossi','Kim','García','Andersson'];
+    let sim={coins:25000,profit:0,trades:0,stock:[],logs:[],market:[],tick:0,running:false,timer:null};
+    function randomCard(){const rating=78+Math.floor(Math.random()*10),base=300+(rating-78)*110,price=floorPrice(Math.max(150,base+(Math.random()-.46)*600)),future=floorPrice(price*(1.08+Math.random()*.38));return{id:Math.random().toString(36).slice(2),name:simNames[Math.floor(Math.random()*simNames.length)],rating,price,future}}
+    function refreshMarket(){sim.market=Array.from({length:8},randomCard);$('marketTick').textContent=`第 ${sim.tick} 次更新`;renderMarket()}
+    function renderMarket(bought=[]){$('marketList').innerHTML=sim.market.map(x=>`<article class="listing ${bought.includes(x.id)?'buy-flash':''}"><div><b>${x.rating} · ${escapeHtml(x.name)}</b><small>預計轉售 ${fmt(x.future)}</small></div><div class="listing-price"><strong>${fmt(x.price)}</strong><small>Coins</small></div></article>`).join('')}
+    function addLog(type,text,amount){sim.logs.unshift({type,text,amount,time:new Date().toLocaleTimeString('zh-HK',{hour:'2-digit',minute:'2-digit',second:'2-digit'})});sim.logs=sim.logs.slice(0,40);$('simLog').innerHTML=sim.logs.map(x=>`<div class="log-row ${x.type}"><time>${x.time}</time><span>${escapeHtml(x.text)}</span><em>${x.amount>0?'+':''}${fmt(x.amount)}</em></div>`).join('')}
+    function updateSim(){const stockCost=sim.stock.reduce((n,x)=>n+x.buy,0);$('simCoins').textContent=fmt(sim.coins);$('simProfit').textContent=(sim.profit>=0?'+':'-')+fmt(Math.abs(sim.profit));$('simProfit').style.color=sim.profit>=0?'var(--lime)':'var(--red)';$('simTrades').textContent=fmt(sim.trades);$('simStock').textContent=`${sim.stock.length} 張`;$('scanState').textContent=sim.running?`掃描中 · 持貨成本 ${fmt(stockCost)}`:'等待開始';$('botState').textContent=sim.running?'Bot 運行中':'Bot 已停止';$('pulse').classList.toggle('running',sim.running);$('startBot').disabled=sim.running;$('stopBot').disabled=!sim.running}
+    function simCycle(){sim.tick++;const sold=[];sim.stock.forEach(x=>{x.age++;if(x.age>=x.sellAfter&&Math.random()<.72){const tax=Math.floor(x.sell*.05),received=x.sell-tax,p=received-x.buy;sim.coins+=received;sim.profit+=p;sim.trades++;sold.push(x.id);addLog('sell',`售出 ${x.rating} ${x.name}（稅 ${fmt(tax)}）`,p)}});sim.stock=sim.stock.filter(x=>!sold.includes(x.id));refreshMarket();const maxBuy=+$('simMaxBuy').value||0,minProfit=+$('simMinProfit').value||0,minRating=+$('simRating').value||0,bought=[];for(const card of sim.market){const tax=Math.floor(card.future*.05),profit=card.future-tax-card.price;if(card.price<=maxBuy&&card.rating>=minRating&&profit>=minProfit&&sim.coins>=card.price&&sim.stock.length<20){sim.coins-=card.price;sim.stock.push({...card,buy:card.price,sell:card.future,age:0,sellAfter:2+Math.floor(Math.random()*4)});bought.push(card.id);addLog('buy',`買入 ${card.rating} ${card.name}，目標售價 ${fmt(card.future)}`,-card.price)}}renderMarket(bought);updateSim()}
+    function scheduleSim(){clearTimeout(sim.timer);if(!sim.running)return;sim.timer=setTimeout(()=>{simCycle();scheduleSim()},+$('simSpeed').value||2200)}
+    function startSim(){if(!sim.logs.length&&!sim.stock.length&&sim.trades===0)sim.coins=Math.max(1000,+$('simBudget').value||25000);sim.running=true;addLog('buy','Auto Buyer 已開始',0);simCycle();scheduleSim();updateSim()}
+    function stopSim(){sim.running=false;clearTimeout(sim.timer);addLog('sell','Auto Buyer 已停止',0);updateSim()}
+    function resetSim(){stopSim();sim={coins:Math.max(1000,+$('simBudget').value||25000),profit:0,trades:0,stock:[],logs:[],market:[],tick:0,running:false,timer:null};$('simLog').innerHTML='<div class="empty"><b>未有交易</b>按「開始」讓 Bot 自動掃描</div>';refreshMarket();updateSim();toast('模擬已重設')}
+    $('startBot').addEventListener('click',startSim);$('stopBot').addEventListener('click',stopSim);$('resetSim').addEventListener('click',resetSim);$('simSpeed').addEventListener('change',()=>{if(sim.running)scheduleSim()});refreshMarket();updateSim();
+    try{const context=document.modelContext;if(context?.registerTool){context.registerTool({name:'calculate_fc_trade',title:'計算 FC 交易',description:'計算一筆手動 FC 卡片交易的 5% 稅、淨利、回報率與目標最高買入價。',inputSchema:{type:'object',properties:{buy:{type:'number',minimum:0},sell:{type:'number',minimum:0},quantity:{type:'integer',minimum:1},targetProfit:{type:'number',minimum:0}},required:['buy','sell'],additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:false},execute(x){if(!Number.isFinite(x.buy)||!Number.isFinite(x.sell))throw new Error('買入價及售價必須是數字');const qty=x.quantity||1,target=x.targetProfit||0,tax=Math.floor(x.sell*.05),net=x.sell-tax,profit=net-x.buy;return{tax,netReceived:net,profitEach:profit,totalProfit:profit*qty,roiPercent:x.buy?+(profit/x.buy*100).toFixed(2):0,maxBuy:floorPrice(net-target)}}});context.registerTool({name:'add_fc_watch_item',title:'加入 FC 觀察名單',description:'將一張卡及預計買賣價格加入本裝置的觀察名單。',inputSchema:{type:'object',properties:{name:{type:'string',minLength:1,maxLength:80},buy:{type:'number',minimum:0},sell:{type:'number',minimum:0},quantity:{type:'integer',minimum:1,maximum:100}},required:['name','buy','sell'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(x){const item=addItem({name:x.name,buy:x.buy,sell:x.sell,qty:x.quantity||1});return{id:item.id,name:item.name,profitEach:item.profit,roiPercent:+item.roi.toFixed(2)}}})}}catch(e){console.debug('WebMCP unavailable',e)}
+  </script>
+</body>
+</html>
